@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
-
-// Google Fonts: add in index.html
-// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
@@ -20,12 +17,6 @@ export default function GudiyaaLoveSite() {
     "I love you so much, Gudiyaa ❤️ You are my everything, forever & always ❤️."
   ];
 
-  const longMessage = `
-My pyariii Gudiyaa 💕 
-
-From the moment we met I somehow knew in my heart that youuu are the one and since that day I have not loved anyone more than you 🥺...
-  `;
-
   const floatingEmojis = [
     { symbol: "❤️", color: "text-rose-400", size: 25 },
     { symbol: "🧿", color: "text-blue-500", size: 30 }
@@ -41,7 +32,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     }
   }, []);
 
-  // Shooting Star / Meteor logic
+  // Night Sky Canvas with Full Moon & Stars
   useEffect(() => {
     if (!isNight) return;
     const canvas = canvasRef.current;
@@ -49,33 +40,44 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight / 3;
 
-    const stars = Array.from({ length: 70 }, () => ({
+    const stars = Array.from({ length: 80 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       r: Math.random() * 2 + 1,
       opacity: Math.random(),
-      delta: Math.random() * 0.02 + 0.01
+      delta: Math.random() * 0.01 + 0.005 // slower twinkle
     }));
 
-    let meteor = null;
-
     function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Background
-      ctx.fillStyle = "rgba(20,15,35,0.7)";
+      // Gradient background: night blending to pink
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, "rgba(20,15,35,0.9)"); // top night
+      gradient.addColorStop(1, "rgba(255,182,193,0.8)"); // soft pink
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Moon
+      // Full Moon
       ctx.save();
-      ctx.translate(100, 100);
-      const moonGradient = ctx.createRadialGradient(0, 0, 20, 0, 0, 60);
-      moonGradient.addColorStop(0, "rgba(255,255,240,0.9)");
-      moonGradient.addColorStop(1, "rgba(255,255,255,0.3)");
+      ctx.translate(120, 120); // position moon
+      const moonGradient = ctx.createRadialGradient(0, 0, 20, 0, 0, 70);
+      moonGradient.addColorStop(0, "rgba(255,255,240,0.95)");
+      moonGradient.addColorStop(1, "rgba(245,245,245,0.3)");
       ctx.fillStyle = moonGradient;
       ctx.beginPath();
-      ctx.arc(0, 0, 50, 0, Math.PI * 2);
+      ctx.arc(0, 0, 60, 0, Math.PI * 2);
       ctx.fill();
+
+      // Add subtle crater effect
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        const angle = Math.random() * Math.PI * 2;
+        const rad = Math.random() * 40;
+        const craterX = Math.cos(angle) * rad;
+        const craterY = Math.sin(angle) * rad;
+        ctx.arc(craterX, craterY, Math.random() * 6 + 3, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(200,200,200,0.2)";
+        ctx.fill();
+      }
       ctx.restore();
 
       // Stars
@@ -88,51 +90,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         if (s.opacity > 1) s.opacity = 0;
       });
 
-      // Meteor
-      if (!meteor && Math.random() < 0.005) {
-        meteor = {
-          x: Math.random() * canvas.width * 0.7 + canvas.width * 0.1,
-          y: 0,
-          angle: Math.PI / 3, // semi-arc trajectory
-          speed: 8,
-          trail: []
-        };
-      }
-
-      if (meteor) {
-        meteor.trail.push({ x: meteor.x, y: meteor.y });
-        if (meteor.trail.length > 20) meteor.trail.shift();
-
-        // Draw fiery trail
-        for (let i = 0; i < meteor.trail.length; i++) {
-          const t = meteor.trail[i];
-          ctx.beginPath();
-          ctx.arc(t.x, t.y, 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,${150 - i * 6},0,${0.5 - i * 0.02})`; // fiery color
-          ctx.fill();
-        }
-
-        // Meteor
-        ctx.beginPath();
-        ctx.arc(meteor.x, meteor.y, 4, 0, Math.PI * 2);
-        ctx.fillStyle = "white";
-        ctx.fill();
-
-        // Tiny smoke
-        ctx.fillStyle = "rgba(200,200,200,0.2)";
-        ctx.beginPath();
-        ctx.arc(meteor.x - 5, meteor.y + 5, 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Update position semi-circle type
-        meteor.x += meteor.speed * Math.cos(meteor.angle);
-        meteor.y += meteor.speed * Math.sin(meteor.angle);
-
-        if (meteor.y > canvas.height || meteor.x > canvas.width) {
-          meteor = null;
-        }
-      }
-
       requestAnimationFrame(draw);
     }
 
@@ -140,7 +97,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
   }, [isNight]);
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden font-poppins">
+    <div className="min-h-screen relative flex flex-col items-center justify-center font-poppins">
 
       {/* Night Sky Canvas */}
       {isNight && (
@@ -149,6 +106,9 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
           className="absolute top-0 left-0 w-full h-1/3 z-0 pointer-events-none"
         />
       )}
+
+      {/* Pink background for bottom 2/3 with slightly darker shade */}
+      <div className="absolute top-1/3 w-full h-2/3 bg-gradient-to-b from-pink-300 via-pink-400 to-pink-300 z-0" />
 
       {/* Floating emojis (bottom 2/3) */}
       {[...Array(25)].map((_, i) => {
@@ -171,7 +131,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         );
       })}
 
-      {/* Title */}
+      {/* Title and main content */}
       <motion.div
         className="text-center mb-8 z-10"
         initial={{ opacity: 0, y: -30 }}
@@ -196,7 +156,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         <Mail className="w-6 h-6" /> Open Your Letter
       </motion.button>
 
-      {/* The rest of your envelope modals code stays unchanged */}
+      {/* Add your envelope modals code below */}
     </div>
   );
 }
