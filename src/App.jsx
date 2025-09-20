@@ -1,86 +1,72 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail } from "lucide-react";
+import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
+
+// If using Google Fonts, make sure to include in your index.html:
+// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
-  const [cloudClicked, setCloudClicked] = useState(false);
-  const [showKiss, setShowKiss] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
+  const [cardIndex, setCardIndex] = useState(0);
+  const [showScroll, setShowScroll] = useState(false);
 
-  // Handle cloud click
-  const handleCloudClick = () => {
-    if (!cloudClicked) {
-      setCloudClicked(true);
-      setShowKiss(true);
-      // After kiss animation, show text
-      setTimeout(() => {
-        setShowKiss(false);
-        setShowMessage(true);
-      }, 1500); // kiss animation duration
-    }
-  };
+  const cards = [
+    "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
+    "I love your sundrrrrr voice, your cutuuuu laugh. Onlyyyy you can make my heart melt everyday ✨.",
+    "3 years together and still counting… I want to spend forever with you 💍💕💕💕❤️.",
+    "You are meraa chotuu sa bacchaa and no matter how old we get you will always remain my chotuuubaby 💖.",
+    "I love you so much, Gudiyaa ❤️ You are my everything, forever & always ❤️."
+  ];
+
+  const longMessage = `
+My pyariii Gudiyaa 💕 
+
+From the moment we met I somehow knew in my heart that youuu are the one and since that day I have not loved anyone more than you 🥺. I want to spend every single day making you feel loved and special because you deserve it and you desrveeee so much moreee, Jaan. You are my heart. No words can truly capture how much I adore you. Every day theee love grows innn my dill. I just lovee youuu soo soo much. You are my family, my comfort, my wife. We will live our whole life together just each other’s. I’ll make my girl's each and every dream come true. We will wakeee up together and wee will ninii togetherrr. Ap Meri Sanju ho aur ap mere he rahogi. I’ll never let your cutest smileee fade. You make me smile, you make meee happy, just ME & YOU 💟💟❤. With lotsss of loveee meriii jaannn, yourrrr babyyyy, Aruuuuuuu 💗💗💗🤭
+`;
+
+  const floatingEmojis = [
+    { symbol: "❤️", color: "text-rose-400", size: 25 },
+    { symbol: "🧿", color: "text-blue-500", size: 30 }
+  ];
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 font-poppins">
+    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden font-poppins">
+
+      {/* Floating emojis */}
+      {[...Array(25)].map((_, i) => {
+        const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
+        return (
+          <motion.div
+            key={i}
+            className={`${emoji.color} absolute`}
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              fontSize: `${emoji.size + Math.random() * 15}px`
+            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: [0, 1, 0], y: [0, -50], scale: [0.6, 1.2, 0.6] }}
+            transition={{ duration: 5 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }}
+          >
+            {emoji.symbol}
+          </motion.div>
+        );
+      })}
 
       {/* Title */}
-      <div className="text-center mb-8 relative z-10">
+      <motion.div
+        className="text-center mb-8 z-10"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
         <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md">
           💌 For My Gudiyaa 💌
         </h1>
-
-        {/* Cloud */}
-        <div className="relative w-64 h-32 mt-6 mx-auto">
-          {!cloudClicked && (
-            <motion.div
-              className="relative w-full h-full cursor-pointer"
-              onClick={handleCloudClick}
-              whileHover={{ scale: 1.05 }}
-              initial={{ scale: 1 }}
-              animate={{ scale: 1 }}
-            >
-              {/* Simple cloud using blurred white circles */}
-              <div className="absolute w-24 h-24 bg-white rounded-full blur-md -left-4 top-2"></div>
-              <div className="absolute w-28 h-28 bg-white rounded-full blur-md left-10 top-0"></div>
-              <div className="absolute w-32 h-32 bg-white rounded-full blur-md left-6 top-6"></div>
-              <div className="absolute w-36 h-36 bg-white rounded-full blur-md left-0 top-10"></div>
-              <p className="absolute w-full text-center top-10 font-bold text-gray-700 text-lg z-10">
-                Click me ☁️
-              </p>
-            </motion.div>
-          )}
-
-          {/* Kiss animation */}
-          <AnimatePresence>
-            {showKiss && (
-              <motion.div
-                className="absolute top-0 left-1/2 -translate-x-1/2 text-6xl text-pink-500"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 2, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 1.5 }}
-              >
-                💋
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Message after kiss */}
-          <AnimatePresence>
-            {showMessage && (
-              <motion.div
-                className="absolute top-0 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-xl text-center text-rose-600 text-lg font-bold w-72"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.6 }}
-              >
-                AWWW you clicked, <br /> YOU ARE SUCH A CUTIEEEEBB!!!
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
+        <p className="text-lg md:text-xl text-rose-600 mt-3">
+          3 years together... and many more to come ❤️
+        </p>
+      </motion.div>
 
       {/* Open envelope button */}
       <motion.button
@@ -92,7 +78,117 @@ export default function GudiyaaLoveSite() {
         <Mail className="w-6 h-6" /> Open Your Letter
       </motion.button>
 
-      {/* Keep your original envelope modal & scroll modal here */}
+      {/* Envelope modal */}
+      <AnimatePresence>
+        {open && !showScroll && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative flex flex-col items-center"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+            >
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute top-4 right-4 text-rose-500 hover:text-rose-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-rose-600 text-center mb-4">
+                My Sweetest Gudiyaa ❤️
+              </h2>
+
+              <motion.div
+                key={cardIndex}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.3 }}
+                className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center"
+              >
+                {cards[cardIndex]}
+              </motion.div>
+
+              {/* Navigation */}
+              <div className="flex justify-between w-full mt-6">
+                <button
+                  onClick={() => setCardIndex((cardIndex - 1 + cards.length) % cards.length)}
+                  className="p-2 text-rose-500 hover:text-rose-700"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setCardIndex((cardIndex + 1) % cards.length)}
+                  className="p-2 text-rose-500 hover:text-rose-700"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Heart with text */}
+              <div className="flex flex-col items-center mt-6 cursor-pointer" onClick={() => setShowScroll(true)}>
+                <p className="text-rose-600 font-semibold mb-2 text-center">
+                  Click on the heart my betuu
+                </p>
+                <motion.div
+                  className="animate-pulse"
+                  whileHover={{ scale: 1.2 }}
+                >
+                  <Heart className="w-10 h-10 text-rose-500 fill-rose-500" />
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Scroll modal */}
+      <AnimatePresence>
+        {showScroll && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+            >
+              <button
+                onClick={() => setShowScroll(false)}
+                className="absolute top-4 right-4 text-rose-500 hover:text-rose-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Scrollable cute paper */}
+              <div className="bg-white p-6 rounded-xl shadow-inner border border-pink-200 w-full relative overflow-auto max-h-[80vh] max-w-full">
+                {/* Ribbons and flowers */}
+                <div className="absolute top-0 left-0 right-0 flex justify-between p-2 text-pink-400 font-bold text-xl">
+                  <div>🎀🌸</div>
+                  <div>🌸🎀</div>
+                </div>
+
+                {/* Scrollable message */}
+                <pre className="whitespace-pre-wrap text-center text-rose-600 text-base font-poppins min-w-[600px]">
+                  {longMessage}
+                </pre>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
