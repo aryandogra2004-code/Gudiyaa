@@ -14,21 +14,32 @@ export default function GudiyaaLoveSite() {
     "I love you so much, Gudiyaa ❤️ You are my everything, forever & always ❤️."
   ];
 
+  // Floating emojis (hearts + nazar eyes)
+  const floatingEmojis = [
+    { symbol: "❤️", color: "text-rose-400" },
+    { symbol: "🧿", color: "text-blue-500" }
+  ];
+
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden">
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-rose-400"
-          style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%` }}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: [0, 1, 0], y: [0, -50], scale: [0.6, 1.2, 0.6] }}
-          transition={{ duration: 6 + Math.random() * 3, repeat: Infinity, delay: i * 0.5 }}
-        >
-          ❤️
-        </motion.div>
-      ))}
+      {/* Floating emojis */}
+      {[...Array(20)].map((_, i) => {
+        const emoji = floatingEmojis[i % floatingEmojis.length];
+        return (
+          <motion.div
+            key={i}
+            className={`absolute ${emoji.color}`}
+            style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`, fontSize: `${20 + Math.random()*20}px` }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: [0, 1, 0], y: [0, -50], scale: [0.6, 1.2, 0.6] }}
+            transition={{ duration: 6 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }}
+          >
+            {emoji.symbol}
+          </motion.div>
+        );
+      })}
 
+      {/* Title */}
       <motion.div
         className="text-center mb-8 z-10"
         initial={{ opacity: 0, y: -30 }}
@@ -43,6 +54,7 @@ export default function GudiyaaLoveSite() {
         </p>
       </motion.div>
 
+      {/* Open envelope button */}
       <motion.button
         onClick={() => setOpen(true)}
         className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-5 rounded-2xl shadow-lg flex items-center gap-3 text-xl font-semibold z-10"
@@ -52,6 +64,7 @@ export default function GudiyaaLoveSite() {
         <Mail className="w-6 h-6" /> Open Your Letter
       </motion.button>
 
+      {/* Envelope modal */}
       <AnimatePresence>
         {open && (
           <motion.div
