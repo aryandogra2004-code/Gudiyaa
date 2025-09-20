@@ -2,13 +2,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// If using Google Fonts, make sure to include in your index.html:
-// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+// Import pop sound (add a pop.mp3 in your public folder)
+const popSoundUrl = "/pop.mp3";
 
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
   const [showScroll, setShowScroll] = useState(false);
+  const [cloudClicked, setCloudClicked] = useState(false);
 
   const cards = [
     "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
@@ -28,6 +29,15 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     { symbol: "❤️", color: "text-rose-400", size: 25 },
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
+
+  const handleCloudClick = () => {
+    if (!cloudClicked) {
+      // Play pop sound
+      const audio = new Audio(popSoundUrl);
+      audio.play();
+      setCloudClicked(true);
+    }
+  };
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden font-poppins">
@@ -55,14 +65,41 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
 
       {/* Title */}
       <motion.div
-        className="text-center mb-8 z-10"
+        className="text-center mb-8 z-10 relative"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md">
+        <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md relative z-10">
           💌 For My Gudiyaa 💌
         </h1>
+
+        {/* Hidden clickable cloud */}
+        <motion.div
+          onClick={handleCloudClick}
+          className="absolute -top-24 left-1/2 -translate-x-1/2 w-52 h-32 bg-yellow-300 rounded-full cursor-pointer flex items-center justify-center shadow-lg z-20"
+          whileHover={{ scale: 1.1 }}
+          animate={cloudClicked ? { scale: [1, 1.5, 0], rotate: [0, 15, -15, 0], opacity: [1, 1, 0] } : { scale: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          {!cloudClicked && <p className="text-rose-700 font-bold text-lg">Click me ☁️</p>}
+        </motion.div>
+
+        {/* Message revealed after cloud bursts */}
+        <AnimatePresence>
+          {cloudClicked && (
+            <motion.div
+              className="absolute -top-24 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-xl text-center text-rose-600 text-lg font-bold z-10 w-64"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              Awww you clicked, <br /> YOU ARE SO CUTE!!!!
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <p className="text-lg md:text-xl text-rose-600 mt-3">
           3 years together... and many more to come ❤️
         </p>
@@ -106,89 +143,3 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
               </h2>
 
               <motion.div
-                key={cardIndex}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
-                transition={{ duration: 0.3 }}
-                className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center"
-              >
-                {cards[cardIndex]}
-              </motion.div>
-
-              {/* Navigation */}
-              <div className="flex justify-between w-full mt-6">
-                <button
-                  onClick={() => setCardIndex((cardIndex - 1 + cards.length) % cards.length)}
-                  className="p-2 text-rose-500 hover:text-rose-700"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setCardIndex((cardIndex + 1) % cards.length)}
-                  className="p-2 text-rose-500 hover:text-rose-700"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </div>
-
-              {/* Heart with text */}
-              <div className="flex flex-col items-center mt-6 cursor-pointer" onClick={() => setShowScroll(true)}>
-                <p className="text-rose-600 font-semibold mb-2 text-center">
-                  Click on the heart my betuu
-                </p>
-                <motion.div
-                  className="animate-pulse"
-                  whileHover={{ scale: 1.2 }}
-                >
-                  <Heart className="w-10 h-10 text-rose-500 fill-rose-500" />
-                </motion.div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Scroll modal */}
-      <AnimatePresence>
-        {showScroll && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.4 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          >
-            <motion.div
-              className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center"
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 50, opacity: 0 }}
-            >
-              <button
-                onClick={() => setShowScroll(false)}
-                className="absolute top-4 right-4 text-rose-500 hover:text-rose-700"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              {/* Scrollable cute paper */}
-              <div className="bg-white p-6 rounded-xl shadow-inner border border-pink-200 w-full relative overflow-auto max-h-[80vh] max-w-full">
-                {/* Ribbons and flowers */}
-                <div className="absolute top-0 left-0 right-0 flex justify-between p-2 text-pink-400 font-bold text-xl">
-                  <div>🎀🌸</div>
-                  <div>🌸🎀</div>
-                </div>
-
-                {/* Scrollable message */}
-                <pre className="whitespace-pre-wrap text-center text-rose-600 text-base font-poppins min-w-[600px]">
-                  {longMessage}
-                </pre>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
