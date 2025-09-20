@@ -16,23 +16,28 @@ export default function GudiyaaLoveSite() {
 
   // Floating emojis (hearts + nazar eyes)
   const floatingEmojis = [
-    { symbol: "❤️", color: "text-rose-400" },
-    { symbol: "🧿", color: "text-blue-500" }
+    { symbol: "❤️", color: "text-rose-400", size: 25 },
+    { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden">
+      
       {/* Floating emojis */}
-      {[...Array(20)].map((_, i) => {
-        const emoji = floatingEmojis[i % floatingEmojis.length];
+      {[...Array(25)].map((_, i) => {
+        const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1]; // alternate hearts & nazar
         return (
           <motion.div
             key={i}
-            className={`absolute ${emoji.color}`}
-            style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`, fontSize: `${20 + Math.random()*20}px` }}
+            className={`${emoji.color} absolute`}
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              fontSize: `${emoji.size + Math.random() * 15}px`
+            }}
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: [0, 1, 0], y: [0, -50], scale: [0.6, 1.2, 0.6] }}
-            transition={{ duration: 6 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }}
+            transition={{ duration: 5 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }}
           >
             {emoji.symbol}
           </motion.div>
