@@ -2,6 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
 
+// If using Google Fonts, make sure to include in your index.html:
+// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
@@ -21,14 +24,13 @@ My pyariii Gudiyaa 💕
 From the moment we met I somehow knew in my heart that youuu are the one and since that day I have not loved anyone more than you 🥺. I want to spend every single day making you feel loved and special because you deserve it and you desrveeee so much moreee, Jaan. You are my heart. No words can truly capture how much I adore you. Every day theee love grows innn my dill. I just lovee youuu soo soo much. You are my family, my comfort, my wife. We will live our whole life together just each other’s. I’ll make my girl's each and every dream come true. We will wakeee up together and wee will ninii togetherrr. Ap Meri Sanju ho aur ap mere he rahogi. I’ll never let your cutest smileee fade. You make me smile, you make meee happy, just ME & YOU 💟💟❤. With lotsss of loveee meriii jaannn, yourrrr babyyyy, Aruuuuuuu 💗💗💗🤭
 `;
 
-  // Floating emojis
   const floatingEmojis = [
     { symbol: "❤️", color: "text-rose-400", size: 25 },
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden">
+    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden font-poppins">
 
       {/* Floating emojis */}
       {[...Array(25)].map((_, i) => {
@@ -155,10 +157,10 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto"
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
           >
             <motion.div
-              className="relative bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-8 flex flex-col items-center"
+              className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
@@ -170,15 +172,16 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
                 <X className="w-5 h-5" />
               </button>
 
-              {/* White cute paper */}
-              <div className="bg-white p-6 rounded-xl shadow-inner border border-pink-200 w-full relative">
+              {/* Scrollable cute paper */}
+              <div className="bg-white p-6 rounded-xl shadow-inner border border-pink-200 w-full relative overflow-auto max-h-[80vh] max-w-full">
                 {/* Ribbons and flowers */}
                 <div className="absolute top-0 left-0 right-0 flex justify-between p-2 text-pink-400 font-bold text-xl">
                   <div>🎀🌸</div>
                   <div>🌸🎀</div>
                 </div>
 
-                <pre className="whitespace-pre-wrap text-center text-rose-600 text-lg">
+                {/* Scrollable message */}
+                <pre className="whitespace-pre-wrap text-center text-rose-600 text-base font-poppins min-w-[600px]">
                   {longMessage}
                 </pre>
               </div>
