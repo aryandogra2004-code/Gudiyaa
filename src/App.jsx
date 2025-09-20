@@ -16,18 +16,10 @@ export default function GudiyaaLoveSite() {
   ];
 
   const longMessage = `
-    My Sweetest Gudiyaa 💕,
+My pyariii Gudiyaa 💕 
 
-    From the moment I met you, my world has been brighter. Every laugh, every hug, every tiny moment
-    we share is etched into my heart forever. You are my little star, my sunshine, my tiny miracle,
-    and I want to spend every single day making you feel loved and special.
-
-    You are my heart, my soul, my everything. No words can truly capture how much I adore you.
-    Here’s to countless more memories, laughter, hugs, kisses, and dreams fulfilled together.
-
-    Always yours,
-    ❤️ Aryan
-  `;
+From the moment we met I somehow knew in my heart that youuu are the one and since that day I have not loved anyone more than you 🥺. I want to spend every single day making you feel loved and special because you deserve it and you desrveeee so much moreee, Jaan. You are my heart. No words can truly capture how much I adore you. Every day theee love grows innn my dill. I just lovee youuu soo soo much. You are my family, my comfort, my wife. We will live our whole life together just each other’s. I’ll make my girl's each and every dream come true. We will wakeee up together and wee will ninii togetherrr. Ap Meri Sanju ho aur ap mere he rahogi. I’ll never let your cutest smileee fade. You make me smile, you make meee happy, just ME & YOU 💟💟❤. With lotsss of loveee meriii jaannn, yourrrr babyyyy, Aruuuuuuu 💗💗💗🤭
+`;
 
   // Floating emojis
   const floatingEmojis = [
@@ -37,7 +29,7 @@ export default function GudiyaaLoveSite() {
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden">
-      
+
       {/* Floating emojis */}
       {[...Array(25)].map((_, i) => {
         const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
@@ -178,14 +170,12 @@ export default function GudiyaaLoveSite() {
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Cute vintage paper background */}
-              <div className="bg-white/90 p-6 rounded-xl shadow-inner border border-pink-200 relative w-full"
-                   style={{ backgroundImage: `url('https://i.ibb.co/9y7rV7K/vintage-paper.png')`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}
-              >
+              {/* White cute paper */}
+              <div className="bg-white p-6 rounded-xl shadow-inner border border-pink-200 w-full relative">
                 {/* Ribbons and flowers */}
-                <div className="absolute top-0 left-0 right-0 flex justify-between p-2">
-                  <div className="text-pink-400 font-bold text-xl">🎀🌸</div>
-                  <div className="text-pink-400 font-bold text-xl">🌸🎀</div>
+                <div className="absolute top-0 left-0 right-0 flex justify-between p-2 text-pink-400 font-bold text-xl">
+                  <div>🎀🌸</div>
+                  <div>🌸🎀</div>
                 </div>
 
                 <pre className="whitespace-pre-wrap text-center text-rose-600 text-lg">
