@@ -1,37 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Google Fonts: <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+// Google Fonts: add in index.html
+// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
   const [showScroll, setShowScroll] = useState(false);
-  const [shootingStar, setShootingStar] = useState(false);
-
-  // Time logic for night effect
+  const canvasRef = useRef(null);
   const [isNight, setIsNight] = useState(false);
-
-  useEffect(() => {
-    const checkNight = () => {
-      const hour = new Date().getHours();
-      setIsNight(hour >= 18 || hour < 5);
-    };
-    checkNight();
-    const interval = setInterval(checkNight, 60000); // check every minute
-    return () => clearInterval(interval);
-  }, []);
-
-  // Shooting star trigger every 8-15 sec
-  useEffect(() => {
-    if (!isNight) return;
-    const timer = setTimeout(() => {
-      setShootingStar(true);
-      setTimeout(() => setShootingStar(false), 2000); // star lasts 2 sec
-    }, Math.random() * 7000 + 8000);
-    return () => clearTimeout(timer);
-  }, [shootingStar, isNight]);
 
   const cards = [
     "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
@@ -43,103 +22,168 @@ export default function GudiyaaLoveSite() {
 
   const longMessage = `
 My pyariii Gudiyaa 💕 
-From the moment we met I somehow knew in my heart that youuu are the one...
-`;
+
+From the moment we met I somehow knew in my heart that youuu are the one and since that day I have not loved anyone more than you 🥺...
+  `;
 
   const floatingEmojis = [
     { symbol: "❤️", color: "text-rose-400", size: 25 },
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
-  // Generate medium density stars
-  const stars = Array.from({ length: 40 }, (_, i) => ({
-    x: Math.random() * 100,
-    y: Math.random() * 33, // top 1/3 for night
-    size: 1 + Math.random() * 2,
-    blink: 0.5 + Math.random() * 1.5
-  }));
+  // Night / Day check
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 18 || hour < 5) {
+      setIsNight(true);
+    } else {
+      setIsNight(false);
+    }
+  }, []);
+
+  // Shooting Star / Meteor logic
+  useEffect(() => {
+    if (!isNight) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight / 3;
+
+    const stars = Array.from({ length: 70 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 1,
+      opacity: Math.random(),
+      delta: Math.random() * 0.02 + 0.01
+    }));
+
+    let meteor = null;
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Background
+      ctx.fillStyle = "rgba(20,15,35,0.7)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Moon
+      ctx.save();
+      ctx.translate(100, 100);
+      const moonGradient = ctx.createRadialGradient(0, 0, 20, 0, 0, 60);
+      moonGradient.addColorStop(0, "rgba(255,255,240,0.9)");
+      moonGradient.addColorStop(1, "rgba(255,255,255,0.3)");
+      ctx.fillStyle = moonGradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, 50, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Stars
+      stars.forEach(s => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.opacity})`;
+        ctx.fill();
+        s.opacity += s.delta;
+        if (s.opacity > 1) s.opacity = 0;
+      });
+
+      // Meteor
+      if (!meteor && Math.random() < 0.005) {
+        meteor = {
+          x: Math.random() * canvas.width * 0.7 + canvas.width * 0.1,
+          y: 0,
+          angle: Math.PI / 3, // semi-arc trajectory
+          speed: 8,
+          trail: []
+        };
+      }
+
+      if (meteor) {
+        meteor.trail.push({ x: meteor.x, y: meteor.y });
+        if (meteor.trail.length > 20) meteor.trail.shift();
+
+        // Draw fiery trail
+        for (let i = 0; i < meteor.trail.length; i++) {
+          const t = meteor.trail[i];
+          ctx.beginPath();
+          ctx.arc(t.x, t.y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,${150 - i * 6},0,${0.5 - i * 0.02})`; // fiery color
+          ctx.fill();
+        }
+
+        // Meteor
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+
+        // Tiny smoke
+        ctx.fillStyle = "rgba(200,200,200,0.2)";
+        ctx.beginPath();
+        ctx.arc(meteor.x - 5, meteor.y + 5, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Update position semi-circle type
+        meteor.x += meteor.speed * Math.cos(meteor.angle);
+        meteor.y += meteor.speed * Math.sin(meteor.angle);
+
+        if (meteor.y > canvas.height || meteor.x > canvas.width) {
+          meteor = null;
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  }, [isNight]);
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center overflow-hidden font-poppins">
-      {/* Night overlay */}
+    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden font-poppins">
+
+      {/* Night Sky Canvas */}
       {isNight && (
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900 via-transparent to-transparent z-0">
-          {/* Full Moon */}
-          <motion.div
-            className="absolute top-12 left-10 w-24 h-24 rounded-full bg-yellow-200 shadow-xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          />
-          {/* Stars */}
-          {stars.map((star, i) => (
-            <motion.div
-              key={i}
-              className="absolute bg-white rounded-full"
-              style={{
-                top: `${star.y}%`,
-                left: `${star.x}%`,
-                width: `${star.size}px`,
-                height: `${star.size}px`
-              }}
-              animate={{ opacity: [0.2, 1, 0.2] }}
-              transition={{
-                duration: star.blink,
-                repeat: Infinity,
-                repeatType: "mirror",
-                delay: i * 0.1
-              }}
-            />
-          ))}
-          {/* Shooting Star */}
-          <AnimatePresence>
-            {shootingStar && (
-              <motion.div
-                initial={{ x: -50, y: 0, opacity: 0, scale: 0.8 }}
-                animate={{ x: 120, y: 150, opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 2, ease: "easeInOut" }}
-                className="absolute w-4 h-4 bg-red-400 rounded-full shadow-lg"
-              >
-                {/* Fiery trail */}
-                <div className="absolute w-16 h-1 bg-gradient-to-r from-red-500 via-orange-400 to-yellow-300 rounded-full blur-sm -left-14 top-1/2" />
-                {/* Smoke puffs */}
-                <div className="absolute w-2 h-2 bg-gray-200 rounded-full opacity-50 -left-6 top-1/2 blur-sm" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0 left-0 w-full h-1/3 z-0 pointer-events-none"
+        />
       )}
 
-      {/* Floating emojis in pink area */}
-      <div className="absolute bottom-0 w-full h-2/3 z-0">
-        {[...Array(25)].map((_, i) => {
-          const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
-          return (
-            <motion.div
-              key={i}
-              className={`${emoji.color} absolute`}
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                fontSize: `${emoji.size + Math.random() * 15}px`
-              }}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: [0, 1, 0], y: [0, -50], scale: [0.6, 1.2, 0.6] }}
-              transition={{ duration: 5 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }}
-            >
-              {emoji.symbol}
-            </motion.div>
-          );
-        })}
-      </div>
+      {/* Floating emojis (bottom 2/3) */}
+      {[...Array(25)].map((_, i) => {
+        const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
+        return (
+          <motion.div
+            key={i}
+            className={`${emoji.color} absolute`}
+            style={{
+              top: `${Math.random() * 66 + 33}%`, // bottom 2/3 only
+              left: `${Math.random() * 100}%`,
+              fontSize: `${emoji.size + Math.random() * 15}px`
+            }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: [0, 1, 0], y: [0, -50], scale: [0.6, 1.2, 0.6] }}
+            transition={{ duration: 5 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }}
+          >
+            {emoji.symbol}
+          </motion.div>
+        );
+      })}
 
       {/* Title */}
-      <motion.div className="text-center mb-8 z-10" initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+      <motion.div
+        className="text-center mb-8 z-10"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
         <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md">
           💌 For My Gudiyaa 💌
         </h1>
-        <p className="text-lg md:text-xl text-rose-600 mt-3">3 years together... and many more to come ❤️</p>
+        <p className="text-lg md:text-xl text-rose-600 mt-3">
+          3 years together... and many more to come ❤️
+        </p>
       </motion.div>
 
       {/* Open envelope button */}
@@ -152,8 +196,7 @@ From the moment we met I somehow knew in my heart that youuu are the one...
         <Mail className="w-6 h-6" /> Open Your Letter
       </motion.button>
 
-      {/* Envelope and scroll modals remain same */}
-      {/* (You can copy your previous modal code here) */}
+      {/* The rest of your envelope modals code stays unchanged */}
     </div>
   );
 }
