@@ -2,9 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Import pop sound (add a pop.mp3 in your public folder)
-const popSoundUrl = "/pop.mp3";
-
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
@@ -29,15 +26,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     { symbol: "❤️", color: "text-rose-400", size: 25 },
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
-
-  const handleCloudClick = () => {
-    if (!cloudClicked) {
-      // Play pop sound
-      const audio = new Audio(popSoundUrl);
-      audio.play();
-      setCloudClicked(true);
-    }
-  };
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden font-poppins">
@@ -76,7 +64,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
 
         {/* Hidden clickable cloud */}
         <motion.div
-          onClick={handleCloudClick}
+          onClick={() => setCloudClicked(true)}
           className="absolute -top-24 left-1/2 -translate-x-1/2 w-52 h-32 bg-yellow-300 rounded-full cursor-pointer flex items-center justify-center shadow-lg z-20"
           whileHover={{ scale: 1.1 }}
           animate={cloudClicked ? { scale: [1, 1.5, 0], rotate: [0, 15, -15, 0], opacity: [1, 1, 0] } : { scale: 1 }}
@@ -143,3 +131,36 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
               </h2>
 
               <motion.div
+                key={cardIndex}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.3 }}
+                className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center"
+              >
+                {cards[cardIndex]}
+              </motion.div>
+
+              {/* Navigation */}
+              <div className="flex justify-between w-full mt-6">
+                <button
+                  onClick={() => setCardIndex((cardIndex - 1 + cards.length) % cards.length)}
+                  className="p-2 text-rose-500 hover:text-rose-700"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setCardIndex((cardIndex + 1) % cards.length)}
+                  className="p-2 text-rose-500 hover:text-rose-700"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Heart with text */}
+              <div className="flex flex-col items-center mt-6 cursor-pointer" onClick={() => setShowScroll(true)}>
+                <p className="text-rose-600 font-semibold mb-2 text-center">
+                  Click on the heart my betuu
+                </p>
+                <motion.div
+                  className="animate-pu
