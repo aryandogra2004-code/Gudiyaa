@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
+
+// If using Google Fonts, make sure to include in your index.html:
+// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
   const [showScroll, setShowScroll] = useState(false);
-  const canvasRef = useRef(null);
-  const [isNight, setIsNight] = useState(false);
 
   const cards = [
     "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
@@ -17,100 +18,21 @@ export default function GudiyaaLoveSite() {
     "I love you so much, Gudiyaa ❤️ You are my everything, forever & always ❤️."
   ];
 
+  const longMessage = `
+My pyariii Gudiyaa 💕 
+
+From the moment we met I somehow knew in my heart that youuu are the one and since that day I have not loved anyone more than you 🥺. I want to spend every single day making you feel loved and special because you deserve it and you desrveeee so much moreee, Jaan. You are my heart. No words can truly capture how much I adore you. Every day theee love grows innn my dill. I just lovee youuu soo soo much. You are my family, my comfort, my wife. We will live our whole life together just each other’s. I’ll make my girl's each and every dream come true. We will wakeee up together and wee will ninii togetherrr. Ap Meri Sanju ho aur ap mere he rahogi. I’ll never let your cutest smileee fade. You make me smile, you make meee happy, just ME & YOU 💟💟❤. With lotsss of loveee meriii jaannn, yourrrr babyyyy, Aruuuuuuu 💗💗💗🤭
+`;
+
   const floatingEmojis = [
     { symbol: "❤️", color: "text-rose-400", size: 25 },
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
-  // Night / Day check
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour >= 18 || hour < 5) {
-      setIsNight(true);
-    } else {
-      setIsNight(false);
-    }
-  }, []);
-
-  // Night Sky Canvas with Full Moon & Stars
-  useEffect(() => {
-    if (!isNight) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight / 3;
-
-    const stars = Array.from({ length: 80 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 2 + 1,
-      opacity: Math.random(),
-      delta: Math.random() * 0.01 + 0.005 // slower twinkle
-    }));
-
-    function draw() {
-      // Gradient background: night blending to pink
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, "rgba(20,15,35,0.9)"); // top night
-      gradient.addColorStop(1, "rgba(255,182,193,0.8)"); // soft pink
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Full Moon
-      ctx.save();
-      ctx.translate(120, 120); // position moon
-      const moonGradient = ctx.createRadialGradient(0, 0, 20, 0, 0, 70);
-      moonGradient.addColorStop(0, "rgba(255,255,240,0.95)");
-      moonGradient.addColorStop(1, "rgba(245,245,245,0.3)");
-      ctx.fillStyle = moonGradient;
-      ctx.beginPath();
-      ctx.arc(0, 0, 60, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Add subtle crater effect
-      for (let i = 0; i < 6; i++) {
-        ctx.beginPath();
-        const angle = Math.random() * Math.PI * 2;
-        const rad = Math.random() * 40;
-        const craterX = Math.cos(angle) * rad;
-        const craterY = Math.sin(angle) * rad;
-        ctx.arc(craterX, craterY, Math.random() * 6 + 3, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(200,200,200,0.2)";
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // Stars
-      stars.forEach(s => {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${s.opacity})`;
-        ctx.fill();
-        s.opacity += s.delta;
-        if (s.opacity > 1) s.opacity = 0;
-      });
-
-      requestAnimationFrame(draw);
-    }
-
-    draw();
-  }, [isNight]);
-
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center font-poppins">
+    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-pink-300 to-rose-200 p-6 overflow-hidden font-poppins">
 
-      {/* Night Sky Canvas */}
-      {isNight && (
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-1/3 z-0 pointer-events-none"
-        />
-      )}
-
-      {/* Pink background for bottom 2/3 with slightly darker shade */}
-      <div className="absolute top-1/3 w-full h-2/3 bg-gradient-to-b from-pink-300 via-pink-400 to-pink-300 z-0" />
-
-      {/* Floating emojis (bottom 2/3) */}
+      {/* Floating emojis */}
       {[...Array(25)].map((_, i) => {
         const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
         return (
@@ -118,7 +40,7 @@ export default function GudiyaaLoveSite() {
             key={i}
             className={`${emoji.color} absolute`}
             style={{
-              top: `${Math.random() * 66 + 33}%`, // bottom 2/3 only
+              top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               fontSize: `${emoji.size + Math.random() * 15}px`
             }}
@@ -131,7 +53,7 @@ export default function GudiyaaLoveSite() {
         );
       })}
 
-      {/* Title and main content */}
+      {/* Title */}
       <motion.div
         className="text-center mb-8 z-10"
         initial={{ opacity: 0, y: -30 }}
@@ -156,7 +78,117 @@ export default function GudiyaaLoveSite() {
         <Mail className="w-6 h-6" /> Open Your Letter
       </motion.button>
 
-      {/* Add your envelope modals code below */}
+      {/* Envelope modal */}
+      <AnimatePresence>
+        {open && !showScroll && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative flex flex-col items-center"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+            >
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute top-4 right-4 text-rose-500 hover:text-rose-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-2xl font-bold text-rose-600 text-center mb-4">
+                My Sweetest Gudiyaa ❤️
+              </h2>
+
+              <motion.div
+                key={cardIndex}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.3 }}
+                className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center"
+              >
+                {cards[cardIndex]}
+              </motion.div>
+
+              {/* Navigation */}
+              <div className="flex justify-between w-full mt-6">
+                <button
+                  onClick={() => setCardIndex((cardIndex - 1 + cards.length) % cards.length)}
+                  className="p-2 text-rose-500 hover:text-rose-700"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setCardIndex((cardIndex + 1) % cards.length)}
+                  className="p-2 text-rose-500 hover:text-rose-700"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Heart with text */}
+              <div className="flex flex-col items-center mt-6 cursor-pointer" onClick={() => setShowScroll(true)}>
+                <p className="text-rose-600 font-semibold mb-2 text-center">
+                  Click on the heart my betuu
+                </p>
+                <motion.div
+                  className="animate-pulse"
+                  whileHover={{ scale: 1.2 }}
+                >
+                  <Heart className="w-10 h-10 text-rose-500 fill-rose-500" />
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Scroll modal */}
+      <AnimatePresence>
+        {showScroll && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+            >
+              <button
+                onClick={() => setShowScroll(false)}
+                className="absolute top-4 right-4 text-rose-500 hover:text-rose-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Scrollable cute paper */}
+              <div className="bg-white p-6 rounded-xl shadow-inner border border-pink-200 w-full relative overflow-auto max-h-[80vh] max-w-full">
+                {/* Ribbons and flowers */}
+                <div className="absolute top-0 left-0 right-0 flex justify-between p-2 text-pink-400 font-bold text-xl">
+                  <div>🎀🌸</div>
+                  <div>🌸🎀</div>
+                </div>
+
+                {/* Scrollable message */}
+                <pre className="whitespace-pre-wrap text-center text-rose-600 text-base font-poppins min-w-[600px]">
+                  {longMessage}
+                </pre>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
