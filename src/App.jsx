@@ -32,19 +32,13 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     delay: Math.random() * 3
   }));
 
-  const clouds = [...Array(5)].map((_, i) => ({
-    top: Math.random() * 20 + 5,
-    left: Math.random() * 100,
-    speed: Math.random() * 5 + 1
-  }));
-
   // Determine phase based on time
   useEffect(() => {
     const updatePhase = () => {
       const h = new Date().getHours();
-      if (h >= 18 || h < 5) setPhase("night");
-      else if (h >= 15) setPhase("evening"); // Shifted evening to start at 3 PM
-      else setPhase("day"); // 5 AM – 3 PM remains day (plain pink, no weather)
+      if (h >= 18 || h < 5) setPhase("night");       // Night: 6 PM – 5 AM
+      else if (h >= 15) setPhase("evening");         // Evening: 3 PM – 6 PM
+      else setPhase("day");                          // Day: 5 AM – 3 PM (plain pink)
     };
     updatePhase();
     const interval = setInterval(updatePhase, 60000);
@@ -63,41 +57,44 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
 
   const getMessage = () => {
     if (phase === "night") return "Get tucked in your blanket and sleepee cozy and comfy, my Gudiyaa 🌙💖";
-    if (phase === "day") return ""; // No weather message during day
     if (phase === "evening") return "Cozy clouds for my cutie ☁️💗";
-    return "";
+    return ""; // No day message
   };
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-start font-poppins overflow-hidden bg-pink-200">
-      
-      {/* Weather Top 1/3 */}
+
+      {/* Top Gradient / Background */}
       <div className="absolute top-0 left-0 w-full h-1/3 z-0 overflow-hidden">
-        {/* Background gradient */}
         <div
-          className={`absolute top-0 left-0 w-full h-full transition-colors duration-1000 
-            ${phase==="night" ? "bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent" : ""} 
-            ${phase==="day" ? "bg-pink-200" : ""} 
+          className={`absolute top-0 left-0 w-full h-full transition-colors duration-1000
+            ${phase==="night" ? "bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent" : ""}
+            ${phase==="day" ? "bg-pink-200" : ""}
             ${phase==="evening" ? "bg-gradient-to-b from-[#ff7f50] via-[#ff4500] to-transparent" : ""}`}
         ></div>
 
-        {/* Sun */}
+        {/* Sunset Sun */}
         {phase === "evening" && (
           <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-orange-400 rounded-full shadow-[0_0_50px_15px_rgba(255,140,0,0.5)]"></div>
         )}
 
-        {/* Clouds */}
-        {phase === "evening" && clouds.map((cloud, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-20 h-12 bg-white/70 rounded-full shadow-lg"
-            style={{ top: `${cloud.top}%`, left: `${cloud.left}%` }}
-            animate={{ x: [0, 100] }}
-            transition={{ repeat: Infinity, duration: cloud.speed, ease: "linear", repeatType: "loop", delay: i }}
-          />
-        ))}
+        {/* Evening clouds */}
+        {phase === "evening" && [...Array(5)].map((_, i) => {
+          const top = Math.random() * 20 + 5;
+          const left = Math.random() * 100;
+          const speed = Math.random() * 5 + 1;
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-20 h-12 bg-white/70 rounded-full shadow-lg"
+              style={{ top: `${top}%`, left: `${left}%` }}
+              animate={{ x: [0, 100] }}
+              transition={{ repeat: Infinity, duration: speed, ease: "linear", repeatType: "loop", delay: i }}
+            />
+          );
+        })}
 
-        {/* Moon & Stars */}
+        {/* Night stars & moon */}
         {phase === "night" && (
           <>
             <div className="absolute top-4 left-4 w-12 h-12 bg-yellow-200 rounded-full shadow-[0_0_30px_8px_rgba(255,255,204,0.3)]">
@@ -156,7 +153,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md"> 💌 For My Gudiyaa 💌 </h1>
       </motion.div>
 
-      {/* Open Letter */}
+      {/* Open Letter Button */}
       <motion.button
         onClick={() => setOpen(true)}
         className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-5 rounded-2xl shadow-lg flex items-center gap-3 text-xl font-semibold z-10"
@@ -167,10 +164,9 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       </motion.button>
 
       {/* "3 years together..." text below button */}
-      <p className="text-lg md:text-xl text-rose-600 mt-4 mb-8">3 years together... and many more to come ❤️</p>
+      <p className="text-lg md:text-xl text-rose-600 mt-4 mb-8 text-center">3 years together... and many more to come ❤️</p>
 
-      {/* Envelope Modal & Scroll Modal remain unchanged (same as before) */}
-      {/* ... (same code as previous version) */}
+      {/* Envelope Modal & Scroll Modal remain the same as before */}
     </div>
   );
 }
