@@ -7,13 +7,7 @@ export default function GudiyaaLoveSite() {
   const [cardIndex, setCardIndex] = useState(0);
   const [showScroll, setShowScroll] = useState(false);
   const [phase, setPhase] = useState("day"); // day, evening, night
-  const [rain, setRain] = useState(false);
-  const [rainTimeout, setRainTimeout] = useState(null);
   const [fallingStar, setFallingStar] = useState(false);
-
-  const API_KEY = "8765c13fab9c81aec1a625fc94420f98";
-  const LAT = 30.722601189215016;
-  const LON = 76.79940208364674;
 
   const cards = [
     "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
@@ -34,12 +28,23 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
-  // Stars for night
   const stars = [...Array(30)].map((_, i) => ({
     top: Math.random() * 33,
     left: Math.random() * 100,
     size: 1 + Math.random() * 2,
     delay: Math.random() * 3
+  }));
+
+  const birds = [
+    { symbol: "🦜", size: 25 },
+    { symbol: "🐦", size: 15 },
+    { symbol: "🐤", size: 18 }
+  ];
+
+  const clouds = [...Array(5)].map((_, i) => ({
+    top: Math.random() * 20 + 5,
+    left: Math.random() * 100,
+    speed: Math.random() * 5 + 1
   }));
 
   // Determine phase based on time
@@ -65,75 +70,35 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     return () => clearInterval(interval);
   }, [phase]);
 
-  // Check weather every minute
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&appid=${API_KEY}`
-        );
-        const data = await res.json();
-        if (data.weather[0].main === "Rain") {
-          setRain(true);
-          if (rainTimeout) clearTimeout(rainTimeout);
-          const timeout = setTimeout(() => setRain(false), 2 * 60 * 60 * 1000); // 2 hours
-          setRainTimeout(timeout);
-        } else setRain(false);
-      } catch (e) {
-        console.error("Weather API error", e);
-      }
-    };
-    fetchWeather();
-    const interval = setInterval(fetchWeather, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Messages based on phase/weather
   const getMessage = () => {
-    if (rain && phase === "night") return "Don't be scared mera Chotaaa sa bchaa it will go away soo soonn 🌧️✨";
-    if (rain && phase === "day") return "Don't be scared mera Chotaaa sa bchaa it will go away soo soonn ☔💞";
-    if (phase === "night") return "get tucked in your blanket and sleepee cozy and comfy, my Gudiyaa 🌙💖";
-    if (phase === "day") return "Goodmorningsss JAAN, wakey wakey Have Sundrrr sa dayyy , dhoop hai thodu sa panii pelooo jaan ☀️💛";
+    if (phase === "night") return "Get tucked in your blanket and sleepee cozy and comfy, my Gudiyaa 🌙💖";
+    if (phase === "day") return "Goodmorningsss JAAN, wakey wakey Have Sundrrr sa dayyy ☀️💛";
     if (phase === "evening") return "Cozy clouds for my cutie ☁️💗";
     return "";
   };
-
-  // Cloud and sun positions
-  const clouds = [...Array(5)].map((_, i) => ({
-    top: Math.random() * 20 + 5,
-    left: Math.random() * 100,
-    speed: Math.random() * 5 + 1
-  }));
-
-  const raindrops = [...Array(100)].map((_, i) => ({
-    left: Math.random() * 100,
-    delay: Math.random() * 2,
-    length: 5 + Math.random() * 10
-  }));
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-start font-poppins overflow-hidden bg-pink-200">
 
       {/* Weather Top 1/3 */}
       <div className="absolute top-0 left-0 w-full h-1/3 z-0 overflow-hidden">
-        {/* Background gradient based on phase */}
+        {/* Background gradient */}
         <div className={`absolute top-0 left-0 w-full h-full transition-colors duration-1000
           ${phase==="night" ? "bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent" : ""}
-          ${phase==="day" && !rain ? "bg-gradient-to-b from-[#87CEFA] via-[#B0E0E6] to-transparent" : ""}
-          ${phase==="evening" && !rain ? "bg-gradient-to-b from-[#f0e68c] via-[#d3d3d3] to-transparent" : ""}
-          ${rain ? "bg-gradient-to-b from-[#a0a0a0] via-[#b0b0b0] to-transparent" : ""}
+          ${phase==="day" ? "bg-gradient-to-b from-[#87CEFA] via-[#B0E0E6] to-transparent" : ""}
+          ${phase==="evening" ? "bg-gradient-to-b from-[#ff7f50] via-[#ff4500] to-transparent" : ""}
         `}></div>
 
         {/* Sun */}
-        {phase === "day" && !rain && (
-          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full bg-yellow-300 shadow-[0_0_30px_10px_rgba(255,255,150,0.5)]">
-            {/* Rays */}
-            <div className="absolute top-0 left-0 w-full h-full rounded-full animate-pulse opacity-50 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200"></div>
-          </div>
+        {(phase === "day" || phase === "evening") && (
+          <div className={`absolute top-8 left-1/2 transform -translate-x-1/2 rounded-full
+            ${phase==="day" ? "w-20 h-20 bg-yellow-300 shadow-[0_0_30px_10px_rgba(255,255,150,0.5)]" : ""}
+            ${phase==="evening" ? "w-24 h-24 bg-orange-400 shadow-[0_0_50px_15px_rgba(255,140,0,0.5)]" : ""}
+          `}></div>
         )}
 
         {/* Clouds */}
-        {(phase === "day" || phase === "evening") && !rain && clouds.map((cloud, i) => (
+        {(phase === "day" || phase === "evening") && clouds.map((cloud, i) => (
           <motion.div key={i} className="absolute w-20 h-12 bg-white/70 rounded-full shadow-lg" 
             style={{ top: `${cloud.top}%`, left: `${cloud.left}%` }}
             animate={{ x: [0, 100] }}
@@ -141,8 +106,27 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
           />
         ))}
 
+        {/* Birds */}
+        {(phase === "day" || phase === "evening") && [...Array(8)].map((_, i) => {
+          const bird = birds[Math.floor(Math.random() * birds.length)];
+          const top = Math.random() * 25 + 5;
+          const delay = Math.random() * 5;
+          const speed = phase === "day" ? 5 + Math.random()*5 : 8 + Math.random()*5;
+          return (
+            <motion.div
+              key={i}
+              className="absolute"
+              style={{ top: `${top}%`, fontSize: `${bird.size}px` }}
+              animate={{ x: ["-10%", "110%"] }}
+              transition={{ repeat: Infinity, duration: speed, ease: "linear", delay }}
+            >
+              {bird.symbol}
+            </motion.div>
+          )
+        })}
+
         {/* Moon & Stars */}
-        {phase === "night" && !rain && (
+        {phase === "night" && (
           <>
             <div className="absolute top-4 left-4 w-12 h-12 bg-yellow-200 rounded-full shadow-[0_0_30px_8px_rgba(255,255,204,0.3)]">
               <div className="w-12 h-12 rounded-full bg-[#0b0b3b] absolute top-0 left-2"></div>
@@ -167,22 +151,13 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
           </>
         )}
 
-        {/* Rain */}
-        {rain && raindrops.map((drop, i) => (
-          <motion.div key={i} className="absolute w-[2px] bg-blue-400 rounded-full" 
-            style={{ left: `${drop.left}%`, top: "-5%", height: `${drop.length}px` }}
-            animate={{ y: ["-5%", "105%"] }}
-            transition={{ duration: 1.5 + Math.random(), repeat: Infinity, delay: drop.delay }}
-          />
-        ))}
-
         {/* Weather Message */}
         <div className="absolute bottom-2 w-full text-center text-white text-sm drop-shadow-lg px-4">
           {getMessage()}
         </div>
       </div>
 
-      {/* Floating emojis bottom 2/3 */}
+      {/* Floating emojis */}
       {[...Array(25)].map((_, i) => {
         const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
         return (
