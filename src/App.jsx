@@ -61,14 +61,37 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-start bg-gradient-to-b from-pink-200 via-pink-300 to-rose-200 font-poppins overflow-hidden">
 
-      {/* Night Sky Top */}
+      {/* 🌙 Night Sky Top with Smooth Wavy Blend */}
       {isNight && (
         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
+          {/* Night sky gradient */}
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent"></div>
+
+          {/* Wavy mask at bottom for smooth blending */}
+          <svg
+            className="absolute bottom-0 left-0 w-full"
+            viewBox="0 0 1440 150"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,96L80,106.7C160,117,320,139,480,138.7C640,139,800,117,960,106.7C1120,96,1280,96,1360,96L1440,96L1440,150L1360,150C1280,150,1120,150,960,150C800,150,640,150,480,150C320,150,160,150,80,150L0,150Z"
+              fill="url(#nightToPink)"
+            />
+            <defs>
+              {/* Gradient that blends night to pink */}
+              <linearGradient id="nightToPink" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="#1c1c55" />
+                <stop offset="100%" stopColor="#fbcfe8" />
+              </linearGradient>
+            </defs>
+          </svg>
+
           {/* Crescent Moon */}
           <div className="absolute top-4 left-4 w-12 h-12 bg-yellow-200 rounded-full shadow-[0_0_30px_8px_rgba(255,255,204,0.3)]">
             <div className="w-12 h-12 rounded-full bg-[#0b0b3b] absolute top-0 left-2"></div>
           </div>
+
           {/* Twinkling stars */}
           {stars.map((star, idx) => (
             <motion.div
@@ -79,6 +102,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
               transition={{ duration: 1 + Math.random() * 2, repeat: Infinity, delay: star.delay }}
             />
           ))}
+
           {/* Falling Star */}
           <AnimatePresence>
             {fallingStar && (
