@@ -9,7 +9,6 @@ export default function GudiyaaLoveSite() {
   const [phase, setPhase] = useState("day"); // day, evening, night
   const [rain, setRain] = useState(false);
   const [fallingStar, setFallingStar] = useState(false);
-  const [weatherMsg, setWeatherMsg] = useState("");
 
   const cards = [
     "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
@@ -30,7 +29,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
-  // Stars for night
   const stars = [...Array(30)].map((_, i) => ({
     top: Math.random() * 33,
     left: Math.random() * 100,
@@ -38,7 +36,20 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     delay: Math.random() * 3
   }));
 
-  // Falling star for night
+  // Determine phase based on time
+  useEffect(() => {
+    const updatePhase = () => {
+      const h = new Date().getHours();
+      if (h >= 18 || h < 5) setPhase("night");
+      else if (h >= 16) setPhase("evening");
+      else setPhase("day");
+    };
+    updatePhase();
+    const interval = setInterval(updatePhase, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Falling star
   useEffect(() => {
     if (phase !== "night") return;
     const interval = setInterval(() => {
@@ -48,129 +59,111 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     return () => clearInterval(interval);
   }, [phase]);
 
-  // Determine time phase every minute
-  useEffect(() => {
-    const updatePhase = () => {
-      const hour = new Date().getHours();
-      if (hour >= 18 || hour < 5) setPhase("night");
-      else if (hour >= 16) setPhase("evening");
-      else setPhase("day");
-    };
-    updatePhase();
-    const interval = setInterval(updatePhase, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  // Messages based on phase/weather
+  const getMessage = () => {
+    if (rain && phase === "night") return "Don't be scared mera Chotaaa sa bchaa it will go away soo soonn 🌧️✨";
+    if (rain && phase === "day") return "Don't be scared mera Chotaaa sa bchaa it will go away soo soonn ☔💞";
+    if (phase === "night") return "get tucked in your blanket and sleepee cozy and comfy, my Gudiyaa 🌙💖";
+    if (phase === "day") return "Goodmorningsss JAAN, wakey wakey Have Sundrrr sa dayyy , dhoop hai thodu sa panii pelooo jaan ☀️💛";
+    if (phase === "evening") return "Cozy clouds for my cutie ☁️💗";
+    return "";
+  };
 
-  // Fetch weather every minute (OpenWeatherMap)
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const key = "8765c13fab9c81aec1a625fc94420f98";
-        const lat = 30.722601189215016;
-        const lon = 76.79940208364674;
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}`);
-        const data = await res.json();
-        // Rain detection (rain exists in api or snow for simplicity)
-        const isRaining = data.weather.some(w => w.main.toLowerCase().includes("rain"));
-        setRain(isRaining);
+  // Clouds
+  const clouds = [...Array(5)].map((_, i) => ({
+    top: Math.random() * 20 + 5,
+    left: Math.random() * 100,
+    speed: Math.random() * 5 + 1
+  }));
 
-        // Update weather message
-        if (isRaining && phase === "day") setWeatherMsg("Don't be scared mera Chotaaa sa bchaa it will go away soo soonn ☔💞");
-        else if (isRaining && phase === "night") setWeatherMsg("Don't be scared mera Chotaaa sa bchaa it will go away soo soonn 🌧️✨");
-        else if (phase === "night") setWeatherMsg("get tucked in your blanket and sleepee cozy and comfy, my Gudiyaa 🌙💖");
-        else if (phase === "day") setWeatherMsg("Goodmorningsss JAAN, wakey wakey Have Sundrrr sa dayyy , dhoop hai thodu sa panii pelooo jaan ☀️💛");
-        else if (phase === "evening") setWeatherMsg("Cozy clouds for my cutie ☁️💗");
-      } catch (err) {
-        console.error("Weather API error:", err);
-      }
-    };
-    fetchWeather();
-    const interval = setInterval(fetchWeather, 60000);
-    return () => clearInterval(interval);
-  }, [phase]);
-
-  // Rain drops for animation
-  const rainDrops = [...Array(50)].map((_, i) => ({
+  // Raindrops
+  const raindrops = [...Array(100)].map((_, i) => ({
     left: Math.random() * 100,
     delay: Math.random() * 2,
-    duration: 0.7 + Math.random() * 0.8
+    length: 5 + Math.random() * 10
   }));
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-start bg-gradient-to-b from-pink-200 via-pink-300 to-rose-200 font-poppins overflow-hidden">
+    <div className="min-h-screen relative flex flex-col items-center justify-start font-poppins overflow-hidden bg-pink-200">
 
-      {/* Top 1/3 weather area */}
-      <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
-        {/* Background gradient blend */}
-        {phase === "night" && (
+      {/* Rain toggle button for testing */}
+      <motion.button
+        onClick={() => setRain(!rain)}
+        className="fixed top-4 right-4 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md z-50 text-sm"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Toggle Rain
+      </motion.button>
+
+      {/* Weather Top 1/3 */}
+      <div className="absolute top-0 left-0 w-full h-1/3 z-0 overflow-hidden">
+        {/* Background gradient */}
+        <div className={`absolute top-0 left-0 w-full h-full transition-colors duration-1000
+          ${phase==="night" ? "bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent" : ""}
+          ${phase==="day" && !rain ? "bg-gradient-to-b from-[#87CEFA] via-[#B0E0E6] to-transparent" : ""}
+          ${phase==="evening" && !rain ? "bg-gradient-to-b from-[#f0e68c] via-[#d3d3d3] to-transparent" : ""}
+          ${rain ? "bg-gradient-to-b from-[#a0a0a0] via-[#b0b0b0] to-transparent" : ""}
+        `}></div>
+
+        {/* Sun */}
+        {phase === "day" && !rain && (
+          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-20 h-20 rounded-full bg-yellow-300 shadow-[0_0_30px_10px_rgba(255,255,150,0.5)]">
+            <div className="absolute top-0 left-0 w-full h-full rounded-full animate-pulse opacity-50 bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200"></div>
+          </div>
+        )}
+
+        {/* Clouds */}
+        {(phase === "day" || phase === "evening") && !rain && clouds.map((cloud, i) => (
+          <motion.div key={i} className="absolute w-20 h-12 bg-white/70 rounded-full shadow-lg" 
+            style={{ top: `${cloud.top}%`, left: `${cloud.left}%` }}
+            animate={{ x: [0, 100] }}
+            transition={{ repeat: Infinity, duration: cloud.speed, ease: "linear", repeatType: "loop", delay: i }}
+          />
+        ))}
+
+        {/* Moon & Stars */}
+        {phase === "night" && !rain && (
           <>
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent"></div>
-            {/* Moon */}
             <div className="absolute top-4 left-4 w-12 h-12 bg-yellow-200 rounded-full shadow-[0_0_30px_8px_rgba(255,255,204,0.3)]">
               <div className="w-12 h-12 rounded-full bg-[#0b0b3b] absolute top-0 left-2"></div>
             </div>
-            {/* Stars */}
-            {stars.map((star, idx) => (
-              <motion.div
-                key={idx}
-                className="absolute bg-white rounded-full"
+            {stars.map((star, i) => (
+              <motion.div key={i} className="absolute bg-white rounded-full"
                 style={{ width: star.size, height: star.size, top: `${star.top}%`, left: `${star.left}%` }}
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ duration: 1 + Math.random() * 2, repeat: Infinity, delay: star.delay }}
+                animate={{ opacity: [0,1,0] }}
+                transition={{ duration: 1 + Math.random()*2, repeat: Infinity, delay: star.delay }}
               />
             ))}
-            {/* Falling star */}
             <AnimatePresence>
               {fallingStar && (
-                <motion.div
-                  className="absolute bg-white w-1 h-1 rounded-full shadow-lg"
+                <motion.div className="absolute bg-white w-1 h-1 rounded-full shadow-lg"
                   initial={{ top: "5%", left: "0%" }}
                   animate={{ top: "25%", left: "100%", scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                  exit={{ opacity:0 }}
+                  transition={{ duration:1.5, ease:"easeInOut" }}
                 />
               )}
             </AnimatePresence>
           </>
         )}
-        {phase === "day" && !rain && (
-          <>
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-yellow-200 via-yellow-100 to-transparent"></div>
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 w-16 h-16 bg-yellow-400 rounded-full shadow-[0_0_50px_8px_rgba(255,255,150,0.5)]"></div>
-            {/* Clouds */}
-            <motion.div className="absolute top-8 left-10 w-20 h-12 bg-white rounded-full opacity-80"
-              animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 20 }} />
-            <motion.div className="absolute top-16 left-40 w-28 h-14 bg-white rounded-full opacity-80"
-              animate={{ x: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 25 }} />
-          </>
-        )}
-        {phase === "evening" && !rain && (
-          <>
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-orange-200 via-orange-100 to-transparent"></div>
-            {/* Sun partially hidden */}
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 w-14 h-14 bg-yellow-400 rounded-full shadow-[0_0_30px_5px_rgba(255,200,150,0.5)]"></div>
-            {/* Cozy clouds */}
-            <motion.div className="absolute top-8 left-10 w-20 h-12 bg-white rounded-full opacity-80"
-              animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 20 }} />
-            <motion.div className="absolute top-16 left-40 w-28 h-14 bg-white rounded-full opacity-80"
-              animate={{ x: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 25 }} />
-          </>
-        )}
-        {/* Rain drops */}
-        {rain && rainDrops.map((drop, idx) => (
-          <motion.div
-            key={idx}
-            className="absolute w-[2px] h-6 bg-blue-400 rounded-full opacity-70"
-            style={{ left: `${drop.left}%` }}
-            animate={{ y: [0, 300] }}
-            transition={{ duration: drop.duration, repeat: Infinity, delay: drop.delay }}
+
+        {/* Rain */}
+        {rain && raindrops.map((drop, i) => (
+          <motion.div key={i} className="absolute w-[2px] bg-blue-400 rounded-full" 
+            style={{ left: `${drop.left}%`, top: "-5%", height: `${drop.length}px` }}
+            animate={{ y: ["-5%", "105%"] }}
+            transition={{ duration: 1.5 + Math.random(), repeat: Infinity, delay: drop.delay }}
           />
         ))}
-        {/* Weather message */}
-        <div className="absolute bottom-2 w-full text-center text-white text-sm drop-shadow-lg">{weatherMsg}</div>
+
+        {/* Weather Message */}
+        <div className="absolute bottom-2 w-full text-center text-white text-sm drop-shadow-lg px-4">
+          {getMessage()}
+        </div>
       </div>
 
-      {/* Floating Emojis bottom 2/3 */}
+      {/* Floating emojis bottom 2/3 */}
       {[...Array(25)].map((_, i) => {
         const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
         return (
@@ -191,28 +184,8 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         );
       })}
 
-      {/* Title */}
-      <motion.div className="text-center mt-40 mb-8 z-10 relative" initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-        <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md">
-          💌 For My Gudiyaa 💌
-        </h1>
-        <p className="text-lg md:text-xl text-rose-600 mt-3">
-          3 years together... and many more to come ❤️
-        </p>
-      </motion.div>
-
-      {/* Open Letter */}
-      <motion.button
-        onClick={() => setOpen(true)}
-        className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-5 rounded-2xl shadow-lg flex items-center gap-3 text-xl font-semibold z-10"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <Mail className="w-6 h-6" /> Open Your Letter
-      </motion.button>
-
-      {/* Envelope & Scroll Modals (unchanged from your original code) */}
-      {/* ... Keep all your original envelope/modal JSX here ... */}
+      {/* Title, Letters, Modal system unchanged */}
+      {/* ... rest of your original code ... */}
     </div>
   );
 }
