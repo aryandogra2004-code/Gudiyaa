@@ -29,7 +29,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
-  // Night / Sunset effect based on time
   useEffect(() => {
     const updateTime = () => {
       const h = new Date().getHours();
@@ -41,7 +40,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     return () => clearInterval(interval);
   }, []);
 
-  // Falling star logic for night only
   useEffect(() => {
     if (!isNight) return;
     const interval = setInterval(() => {
@@ -60,22 +58,17 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-start bg-gradient-to-b from-pink-200 via-pink-300 to-rose-200 font-poppins overflow-hidden">
-      
+
       {/* 🌅 Sunset Phase */}
       {isSunset && (
         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
-          {/* Sunset gradient */}
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-orange-400 via-orange-500 to-transparent"></div>
-
-          {/* Sun going down */}
           <motion.div
             className="absolute left-1/2 -translate-x-1/2 bg-yellow-300 rounded-full shadow-[0_0_30px_10px_rgba(255,200,100,0.5)]"
             style={{ width: 60, height: 60 }}
             animate={{ top: ["10%", "70%"] }}
             transition={{ duration: 20, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
           />
-
-          {/* Clouds */}
           {[...Array(3)].map((_, i) => (
             <motion.div
               key={i}
@@ -89,19 +82,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
               transition={{ duration: 25 + i * 10, repeat: Infinity, ease: "linear" }}
             />
           ))}
-
-          {/* Birds */}
-          {[...Array(2)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute text-2xl"
-              style={{ top: `${20 + i * 15}%`, right: "-10%" }}
-              animate={{ x: ["0%", "-120%"] }}
-              transition={{ duration: 12 + i * 5, repeat: Infinity, ease: "linear" }}
-            >
-              🐦
-            </motion.div>
-          ))}
         </div>
       )}
 
@@ -109,11 +89,9 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       {isNight && (
         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent"></div>
-          {/* Moon */}
           <div className="absolute top-4 left-4 w-12 h-12 bg-yellow-200 rounded-full shadow-[0_0_30px_8px_rgba(255,255,204,0.3)]">
             <div className="w-12 h-12 rounded-full bg-[#0b0b3b] absolute top-0 left-2"></div>
           </div>
-          {/* Stars */}
           {stars.map((star, idx) => (
             <motion.div
               key={idx}
@@ -123,7 +101,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
               transition={{ duration: 1 + Math.random() * 2, repeat: Infinity, delay: star.delay }}
             />
           ))}
-          {/* Falling Star */}
           <AnimatePresence>
             {fallingStar && (
               <motion.div
@@ -135,10 +112,21 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
               />
             )}
           </AnimatePresence>
+          {/* 🌙 Night Message */}
+          <motion.p
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 text-white text-lg md:text-xl font-semibold tracking-wide drop-shadow-lg text-center px-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: [0.2, 1, 0.2] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              textShadow: "0 0 8px rgba(255,255,255,0.8), 0 0 15px rgba(255,255,255,0.5)"
+            }}
+          >
+            Get tucked in your blanket my bachhaaa , Goodniniii see my princess in the morning🎀💕
+          </motion.p>
         </div>
       )}
 
-      {/* ❤️ Floating Emojis (Only in bottom pink area) */}
       {[...Array(25)].map((_, i) => {
         const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
         return (
@@ -159,8 +147,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         );
       })}
 
-      {/* --- Your existing Letter UI code remains unchanged below --- */}
-      {/* Title */}
       <motion.div className="text-center mt-40 mb-8 z-10 relative" initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
         <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md">
           💌 For My Gudiyaa 💌
@@ -170,7 +156,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         </p>
       </motion.div>
 
-      {/* Open Letter */}
       <motion.button
         onClick={() => setOpen(true)}
         className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-5 rounded-2xl shadow-lg flex items-center gap-3 text-xl font-semibold z-10"
@@ -179,9 +164,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       >
         <Mail className="w-6 h-6" /> Open Your Letter
       </motion.button>
-
-      {/* Your modal + scroll logic remains same */}
-      {/* ... */}
     </div>
   );
 }
