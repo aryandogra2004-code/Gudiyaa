@@ -1,31 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, Mail } from "lucide-react";
 
 export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
-  const [cardIndex, setCardIndex] = useState(0);
-  const [showScroll, setShowScroll] = useState(false);
   const [isEvening, setIsEvening] = useState(false);
-
-  const cards = [
-    "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
-    "I love your sundrrrrr voice, your cutuuuu laugh. Onlyyyy you can make my heart melt everyday ✨.",
-    "3 years together and still counting… I want to spend forever with you 💍💕💕💕❤️.",
-    "You are meraa chotuu sa bacchaa and no matter how old we get you will always remain my chotuuubaby 💖.",
-    "I love you so much, Gudiyaa ❤️ You are my everything, forever & always ❤️."
-  ];
-
-  const longMessage = `
-My pyariii Gudiyaa 💕 
-
-From the moment we met I somehow knew in my heart that youuu are the one and since that day I have not loved anyone more than you 🥺. I want to spend every single day making you feel loved and special because you deserve it and you desrveeee so much moreee, Jaan. You are my heart. No words can truly capture how much I adore you. Every day theee love grows innn my dill. I just lovee youuu soo soo much. You are my family, my comfort, my wife. We will live our whole life together just each other’s. I’ll make my girl's each and every dream come true. We will wakeee up together and wee will ninii togetherrr. Ap Meri Sanju ho aur ap mere he rahogi. I’ll never let your cutest smileee fade. You make me smile, you make meee happy, just ME & YOU 💟💟❤. With lotsss of loveee meriii jaannn, yourrrr babyyyy, Aruuuuuuu 💗💗💗🤭
-`;
-
-  const floatingEmojis = [
-    { symbol: "❤️", color: "text-rose-400", size: 25 },
-    { symbol: "🧿", color: "text-blue-500", size: 30 }
-  ];
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -43,10 +22,10 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     <div
       className="min-h-screen relative flex flex-col items-center justify-start font-poppins overflow-hidden"
       style={{
-        background: "linear-gradient(to bottom, #ff8c42, #ff4c29 33%, #ffccdd 100%)"
+        background: "linear-gradient(to bottom, #ff8c42, #ff4c29 33%, #ffccdd 33%, #ffccdd 100%)"
       }}
     >
-      {/* Evening Sunset Sky with Clouds */}
+      {/* Sunset Top 1/3 */}
       {isEvening && (
         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden pointer-events-none">
           {/* Sun */}
@@ -94,49 +73,23 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         </div>
       )}
 
-      {/* Floating Emojis */}
-      {[...Array(25)].map((_, i) => {
-        const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
-        return (
-          <motion.div
-            key={i}
-            className={`${emoji.color} absolute pointer-events-none`}
-            style={{
-              top: `${33 + Math.random() * 67}%`,
-              left: `${Math.random() * 100}%`,
-              fontSize: `${emoji.size + Math.random() * 15}px`
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: [0, 1, 0], y: [0, -50], scale: [0.6, 1.2, 0.6] }}
-            transition={{ duration: 5 + Math.random() * 3, repeat: Infinity, delay: i * 0.3 }}
-          >
-            {emoji.symbol}
-          </motion.div>
-        );
-      })}
-
       {/* Title */}
-      <motion.div className="text-center mt-40 mb-8 z-10 relative" initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+      <div className="text-center mt-40 mb-8 z-10 relative">
         <h1 className="text-4xl md:text-5xl font-bold text-rose-700 drop-shadow-md">
           💌 For My Gudiyaa 💌
         </h1>
         <p className="text-lg md:text-xl text-rose-600 mt-3">
           3 years together... and many more to come ❤️
         </p>
-      </motion.div>
+      </div>
 
       {/* Open Letter Button */}
-      <motion.button
+      <button
         onClick={() => setOpen(true)}
         className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-5 rounded-2xl shadow-lg flex items-center gap-3 text-xl font-semibold z-20"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
       >
         <Mail className="w-6 h-6" /> Open Your Letter
-      </motion.button>
-
-      {/* Envelope & Scroll Modals remain same */}
-      {/* ... */}
+      </button>
     </div>
   );
 }
