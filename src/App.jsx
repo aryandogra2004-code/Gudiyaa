@@ -6,9 +6,7 @@ export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
   const [showScroll, setShowScroll] = useState(false);
-  const [isNight, setIsNight] = useState(false);
   const [isEvening, setIsEvening] = useState(false);
-  const [fallingStar, setFallingStar] = useState(false);
 
   const cards = [
     "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
@@ -29,38 +27,17 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
-  // Determine night and evening phases
   useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    setIsNight(hour >= 18 || hour < 5);
+    const hour = new Date().getHours();
     setIsEvening(hour >= 15 && hour < 18);
 
     const interval = setInterval(() => {
       const h = new Date().getHours();
-      setIsNight(h >= 18 || h < 5);
       setIsEvening(h >= 15 && h < 18);
-    }, 60 * 1000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
-
-  // Falling star
-  useEffect(() => {
-    if (!isNight) return;
-    const interval = setInterval(() => {
-      setFallingStar(true);
-      setTimeout(() => setFallingStar(false), 1500);
-    }, 10000 + Math.random() * 10000);
-    return () => clearInterval(interval);
-  }, [isNight]);
-
-  const stars = [...Array(30)].map((_, i) => ({
-    top: Math.random() * 33,
-    left: Math.random() * 100,
-    size: 1 + Math.random() * 2,
-    delay: Math.random() * 3
-  }));
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-start bg-gradient-to-b from-pink-200 via-pink-300 to-rose-200 font-poppins overflow-hidden">
@@ -68,75 +45,55 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       {/* Evening Sunset Sky */}
       {isEvening && (
         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-orange-400 via-red-400 to-transparent"></div>
-          {/* Animated Sun */}
-          <motion.div
-            className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-300 rounded-full shadow-[0_0_40px_10px_rgba(255,200,0,0.4)]"
-            animate={{
-              top: ["10%", "80%"],
-              scaleY: [1, 0.7],
-              scaleX: [1, 1.2],
-              opacity: [1, 0.6]
-            }}
-            transition={{
-              duration: 8,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "mirror"
-            }}
-          />
-          {/* Soft Clouds */}
-          {[...Array(3)].map((_, i) => (
+          {/* Warm gradient sky */}
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-orange-500 via-red-500 to-yellow-400"></div>
+
+          {/* Clouds behind sun */}
+          {[...Array(2)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute bg-white/70 rounded-full blur-xl"
+              className="absolute bg-white/50 rounded-full blur-2xl"
               style={{
-                width: `${80 + i * 20}px`,
-                height: `${40 + i * 10}px`,
-                top: `${10 + i * 15}%`
+                width: `${100 + i * 40}px`,
+                height: `${50 + i * 20}px`,
+                top: `${10 + i * 20}%`,
+                left: `${i * 50}%`,
+                zIndex: 1
               }}
-              initial={{ x: i % 2 === 0 ? "-20%" : "120%" }}
-              animate={{ x: i % 2 === 0 ? "120%" : "-20%" }}
-              transition={{ duration: 40 + i * 15, repeat: Infinity, ease: "linear" }}
+              initial={{ x: i % 2 === 0 ? "-30%" : "120%" }}
+              animate={{ x: i % 2 === 0 ? "120%" : "-30%" }}
+              transition={{ duration: 60 + i * 20, repeat: Infinity, ease: "linear" }}
             />
           ))}
-        </div>
-      )}
 
-      {/* Night Sky */}
-      {isNight && (
-        <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#0b0b3b] via-[#1c1c55] to-transparent"></div>
-          {/* Crescent Moon */}
-          <div className="absolute top-4 left-4 w-12 h-12 bg-yellow-200 rounded-full shadow-[0_0_30px_8px_rgba(255,255,204,0.3)]">
-            <div className="w-12 h-12 rounded-full bg-[#0b0b3b] absolute top-0 left-2"></div>
-          </div>
-          {/* Twinkling stars */}
-          {stars.map((star, idx) => (
+          {/* Sun */}
+          <motion.div
+            className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-300 rounded-full shadow-[0_0_40px_10px_rgba(255,200,0,0.4)] z-10"
+            animate={{ top: ["10%", "80%"] }}
+            transition={{ duration: 60, ease: "linear", repeat: Infinity }}
+          />
+
+          {/* Clouds in front of sun */}
+          {[...Array(2)].map((_, i) => (
             <motion.div
-              key={idx}
-              className="absolute bg-white rounded-full"
-              style={{ width: star.size, height: star.size, top: `${star.top}%`, left: `${star.left}%` }}
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 1 + Math.random() * 2, repeat: Infinity, delay: star.delay }}
+              key={i}
+              className="absolute bg-white/60 rounded-full blur-2xl"
+              style={{
+                width: `${120 + i * 30}px`,
+                height: `${60 + i * 20}px`,
+                top: `${15 + i * 25}%`,
+                left: `${i * 40}%`,
+                zIndex: 20
+              }}
+              initial={{ x: i % 2 === 0 ? "120%" : "-30%" }}
+              animate={{ x: i % 2 === 0 ? "-30%" : "120%" }}
+              transition={{ duration: 50 + i * 20, repeat: Infinity, ease: "linear" }}
             />
           ))}
-          {/* Falling Star */}
-          <AnimatePresence>
-            {fallingStar && (
-              <motion.div
-                className="absolute bg-white w-1 h-1 rounded-full shadow-lg"
-                initial={{ top: "5%", left: "0%" }}
-                animate={{ top: "25%", left: "100%", scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
-              />
-            )}
-          </AnimatePresence>
         </div>
       )}
 
-      {/* Floating Emojis only on pink area */}
+      {/* Floating Emojis */}
       {[...Array(25)].map((_, i) => {
         const emoji = i % 2 === 0 ? floatingEmojis[0] : floatingEmojis[1];
         return (
@@ -167,7 +124,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         </p>
       </motion.div>
 
-      {/* Open Letter */}
+      {/* Open Letter Button */}
       <motion.button
         onClick={() => setOpen(true)}
         className="bg-rose-500 hover:bg-rose-600 text-white px-8 py-5 rounded-2xl shadow-lg flex items-center gap-3 text-xl font-semibold z-20"
@@ -186,14 +143,14 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.4 }}
             className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-            onClick={() => setOpen(false)} // click outside closes
+            onClick={() => setOpen(false)}
           >
             <motion.div
               className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative flex flex-col items-center"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()} // prevent click inside from closing
+              onClick={(e) => e.stopPropagation()}
             >
               <button onClick={() => setOpen(false)} className="absolute top-4 right-4 text-rose-500 hover:text-rose-700">
                 <X className="w-5 h-5" />
