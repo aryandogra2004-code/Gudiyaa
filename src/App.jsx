@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Heart, Mail, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function GudiyaaLoveSite() {
@@ -40,24 +40,32 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
   }, []);
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-start font-poppins overflow-hidden"
-         style={{
-           background: "linear-gradient(to bottom, #ff8c42, #ff4c29 33%, #ffccdd 100%)"
-         }}>
-
-      {/* Evening Sunset Sky */}
+    <div
+      className="min-h-screen relative flex flex-col items-center justify-start font-poppins overflow-hidden"
+      style={{
+        background: "linear-gradient(to bottom, #ff8c42, #ff4c29 33%, #ffccdd 100%)"
+      }}
+    >
+      {/* Evening Sunset Sky with Clouds */}
       {isEvening && (
         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden pointer-events-none">
+          {/* Sun */}
+          <motion.div
+            className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-300 rounded-full shadow-[0_0_40px_10px_rgba(255,200,0,0.4)] z-10"
+            animate={{ top: ["10%", "80%"] }}
+            transition={{ duration: 60, ease: "linear", repeat: Infinity }}
+          />
+
           {/* Clouds behind sun */}
-          {[...Array(2)].map((_, i) => (
+          {[...Array(3)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute bg-white/50 rounded-full blur-2xl"
               style={{
-                width: `${100 + i * 40}px`,
-                height: `${50 + i * 20}px`,
-                top: `${10 + i * 20}%`,
-                left: `${i * 50}%`,
+                width: `${100 + i * 50}px`,
+                height: `${50 + i * 25}px`,
+                top: `${10 + i * 15}%`,
+                left: `${i * 40}%`,
                 zIndex: 1
               }}
               initial={{ x: i % 2 === 0 ? "-30%" : "120%" }}
@@ -66,23 +74,16 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
             />
           ))}
 
-          {/* Sun */}
-          <motion.div
-            className="absolute left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-300 rounded-full shadow-[0_0_40px_10px_rgba(255,200,0,0.4)] z-10"
-            animate={{ top: ["10%", "80%"] }}
-            transition={{ duration: 60, ease: "linear", repeat: Infinity }}
-          />
-
           {/* Clouds in front of sun */}
           {[...Array(2)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute bg-white/60 rounded-full blur-2xl"
               style={{
-                width: `${120 + i * 30}px`,
-                height: `${60 + i * 20}px`,
-                top: `${15 + i * 25}%`,
-                left: `${i * 40}%`,
+                width: `${120 + i * 40}px`,
+                height: `${60 + i * 25}px`,
+                top: `${15 + i * 20}%`,
+                left: `${i * 30}%`,
                 zIndex: 20
               }}
               initial={{ x: i % 2 === 0 ? "120%" : "-30%" }}
@@ -134,7 +135,7 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         <Mail className="w-6 h-6" /> Open Your Letter
       </motion.button>
 
-      {/* Envelope & Scroll Modals are same as before */}
+      {/* Envelope & Scroll Modals remain same */}
       {/* ... */}
     </div>
   );
