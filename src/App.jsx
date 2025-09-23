@@ -6,10 +6,10 @@ export default function GudiyaaLoveSite() {
   const [open, setOpen] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
   const [showScroll, setShowScroll] = useState(false);
+  const [showSpecialCard, setShowSpecialCard] = useState(false);
   const [isNight, setIsNight] = useState(false);
   const [isEvening, setIsEvening] = useState(false);
   const [fallingStar, setFallingStar] = useState(false);
-  const [showSpecialCard, setShowSpecialCard] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
   const cards = [
@@ -31,8 +31,8 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     { symbol: "🧿", color: "text-blue-500", size: 30 }
   ];
 
-  // Confetti pieces
-  const confettiPieces = [...Array(50)].map((_, i) => ({
+  // Confetti generator
+  const generateConfetti = () => [...Array(50)].map((_, i) => ({
     id: i,
     left: Math.random() * 100,
     rotate: Math.random() * 360,
@@ -61,14 +61,14 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     return () => clearInterval(interval);
   }, [isNight]);
 
-  // Trigger confetti when scroll opens
+  // Trigger confetti when modals open
   useEffect(() => {
-    if (showScroll) {
+    if (showScroll || showSpecialCard) {
       setShowConfetti(true);
       const timeout = setTimeout(() => setShowConfetti(false), 4000);
       return () => clearTimeout(timeout);
     }
-  }, [showScroll]);
+  }, [showScroll, showSpecialCard]);
 
   const stars = [...Array(30)].map((_, i) => ({
     top: Math.random() * 33,
@@ -77,7 +77,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
     delay: Math.random() * 3
   }));
 
-  // Background style based on time
   const hour = new Date().getHours();
   const isPinkTime = hour >= 5 && hour < 15;
   const backgroundStyle = isPinkTime
@@ -89,22 +88,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       className="min-h-screen relative flex flex-col items-center justify-start font-poppins overflow-hidden"
       style={backgroundStyle}
     >
-      {/* Confetti */}
-      {showConfetti &&
-        confettiPieces.map((piece) => (
-          <motion.div
-            key={piece.id}
-            className="absolute w-2 h-2 rounded-full"
-            style={{
-              left: `${piece.left}%`,
-              backgroundColor: piece.color,
-            }}
-            initial={{ y: -10, rotate: piece.rotate, opacity: 1 }}
-            animate={{ y: "120vh", rotate: piece.rotate + 360, opacity: 0 }}
-            transition={{ duration: 3 + Math.random() * 2, ease: "easeOut" }}
-          />
-        ))}
-
       {/* Top 1/3 Sunset */}
       {isEvening && (
         <div className="absolute top-0 left-0 w-full h-1/3 overflow-hidden">
@@ -225,9 +208,20 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.3 }}
-                className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center"
+                className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center relative overflow-hidden"
               >
                 {cards[cardIndex]}
+                {/* Confetti inside card */}
+                {showConfetti && generateConfetti().map(piece => (
+                  <motion.div
+                    key={piece.id}
+                    className="absolute w-2 h-2 rounded-full"
+                    style={{ left: `${piece.left}%`, backgroundColor: piece.color }}
+                    initial={{ y: -10, rotate: piece.rotate, opacity: 1 }}
+                    animate={{ y: "120%", rotate: piece.rotate + 360, opacity: 0 }}
+                    transition={{ duration: 3 + Math.random() * 2, ease: "easeOut" }}
+                  />
+                ))}
               </motion.div>
 
               <div className="flex justify-between w-full mt-6">
@@ -254,11 +248,23 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       <AnimatePresence>
         {showScroll && (
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.4 }} className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <motion.div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}>
+            <motion.div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center overflow-hidden" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}>
               <button onClick={() => setShowScroll(false)} className="absolute top-4 right-4 text-rose-500 hover:text-rose-700">
                 <X className="w-5 h-5" />
               </button>
-              <p className="text-rose-600 text-lg">{longMessage}</p>
+              <p className="text-rose-600 text-lg relative z-10">{longMessage}</p>
+
+              {/* Confetti inside scroll modal */}
+              {showConfetti && generateConfetti().map(piece => (
+                <motion.div
+                  key={piece.id}
+                  className="absolute w-2 h-2 rounded-full"
+                  style={{ left: `${piece.left}%`, backgroundColor: piece.color }}
+                  initial={{ y: -10, rotate: piece.rotate, opacity: 1 }}
+                  animate={{ y: "120%", rotate: piece.rotate + 360, opacity: 0 }}
+                  transition={{ duration: 3 + Math.random() * 2, ease: "easeOut" }}
+                />
+              ))}
             </motion.div>
           </motion.div>
         )}
@@ -280,13 +286,25 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       <AnimatePresence>
         {showSpecialCard && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <motion.div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 flex flex-col items-center" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}>
+            <motion.div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 flex flex-col items-center relative overflow-hidden" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}>
               <button onClick={() => setShowSpecialCard(false)} className="absolute top-4 right-4 text-rose-500 hover:text-rose-700">
                 <X className="w-5 h-5" />
               </button>
-              <div className="text-center text-rose-600 text-lg font-semibold">
+              <div className="text-center text-rose-600 text-lg font-semibold relative z-10">
                 💌 You make me say AWWW!! I loveyouuuuu soo much my pookiedookie🎀❤💌
               </div>
+
+              {/* Confetti inside special card */}
+              {showConfetti && generateConfetti().map(piece => (
+                <motion.div
+                  key={piece.id}
+                  className="absolute w-2 h-2 rounded-full"
+                  style={{ left: `${piece.left}%`, backgroundColor: piece.color }}
+                  initial={{ y: -10, rotate: piece.rotate, opacity: 1 }}
+                  animate={{ y: "120%", rotate: piece.rotate + 360, opacity: 0 }}
+                  transition={{ duration: 3 + Math.random() * 2, ease: "easeOut" }}
+                />
+              ))}
             </motion.div>
           </motion.div>
         )}
