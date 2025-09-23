@@ -10,6 +10,7 @@ export default function GudiyaaLoveSite() {
   const [isEvening, setIsEvening] = useState(false);
   const [fallingStar, setFallingStar] = useState(false);
   const [showSpecialCard, setShowSpecialCard] = useState(false);
+  const [fireworks, setFireworks] = useState([]); // 🔥 Fireworks state
 
   const cards = [
     "You are my tiny baby, my little girl 💕. Every day waking up to your Morningssssweetyyy is the sweetest morning I can have.",
@@ -63,8 +64,24 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
   const hour = new Date().getHours();
   const isPinkTime = hour >= 5 && hour < 15;
   const backgroundStyle = isPinkTime
-    ? { background: "linear-gradient(to bottom, #fbc2eb, #fda4af)" } // full screen pink from 5am–3pm
-    : { background: "linear-gradient(to bottom, #fbc2eb 33%, #fbc2eb 100%)" }; // bottom 2/3 pink from 3pm–5am
+    ? { background: "linear-gradient(to bottom, #fbc2eb, #fda4af)" }
+    : { background: "linear-gradient(to bottom, #fbc2eb 33%, #fbc2eb 100%)" };
+
+  // 🎇 Fireworks generator
+  const triggerFireworks = () => {
+    const colors = ["#fda4af", "#fbc2eb", "#ffe4e6", "#f472b6", "#facc15"];
+    const shapes = ["●", "❤️", "✦"];
+    const particles = Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 2 - 1,
+      y: Math.random() * 2 - 1,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      delay: i * 0.02
+    }));
+    setFireworks(particles);
+    setTimeout(() => setFireworks([]), 1300); // remove after animation
+  };
 
   return (
     <div
@@ -80,20 +97,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
             animate={{ top: ["10%", "80%"] }}
             transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
           />
-          {[...Array(4)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute bg-white/70 rounded-full blur-xl"
-              style={{
-                width: `${80 + i * 20}px`,
-                height: `${40 + i * 10}px`,
-                top: `${10 + i * 12}%`,
-              }}
-              initial={{ x: i % 2 === 0 ? "-20%" : "120%" }}
-              animate={{ x: i % 2 === 0 ? "120%" : "-20%" }}
-              transition={{ duration: 35 + i * 10, repeat: Infinity, ease: "linear" }}
-            />
-          ))}
         </div>
       )}
 
@@ -113,17 +116,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
               transition={{ duration: 1 + Math.random() * 2, repeat: Infinity, delay: star.delay }}
             />
           ))}
-          <AnimatePresence>
-            {fallingStar && (
-              <motion.div
-                className="absolute bg-white w-1 h-1 rounded-full shadow-lg"
-                initial={{ top: "5%", left: "0%" }}
-                animate={{ top: "25%", left: "100%", scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
-              />
-            )}
-          </AnimatePresence>
         </div>
       )}
 
@@ -171,31 +163,15 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       {/* Envelope Modal */}
       <AnimatePresence>
         {open && !showScroll && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.4 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          >
-            <motion.div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative flex flex-col items-center" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}>
+          <motion.div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}>
+            <motion.div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative flex flex-col items-center">
               <button onClick={() => setOpen(false)} className="absolute top-4 right-4 text-rose-500 hover:text-rose-700">
                 <X className="w-5 h-5" />
               </button>
-
               <h2 className="text-2xl font-bold text-rose-600 text-center mb-4">My Sweetest Gudiyaa ❤️</h2>
-
-              <motion.div
-                key={cardIndex}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
-                transition={{ duration: 0.3 }}
-                className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center"
-              >
+              <motion.div key={cardIndex} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }} transition={{ duration: 0.3 }} className="bg-rose-50 p-6 rounded-xl shadow-inner text-center text-gray-700 min-h-[120px] flex items-center justify-center">
                 {cards[cardIndex]}
               </motion.div>
-
               <div className="flex justify-between w-full mt-6">
                 <button onClick={() => setCardIndex((cardIndex - 1 + cards.length) % cards.length)} className="p-2 text-rose-500 hover:text-rose-700">
                   <ChevronLeft className="w-6 h-6" />
@@ -204,7 +180,6 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
                   <ChevronRight className="w-6 h-6" />
                 </button>
               </div>
-
               <div className="flex flex-col items-center mt-6 cursor-pointer" onClick={() => setShowScroll(true)}>
                 <p className="text-rose-600 font-semibold mb-2 text-center">Click on the heart my betuu</p>
                 <motion.div className="animate-pulse" whileHover={{ scale: 1.2 }}>
@@ -219,12 +194,12 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       {/* Scroll Modal */}
       <AnimatePresence>
         {showScroll && (
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.4 }} className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <motion.div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}>
+          <motion.div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}>
+            <motion.div className="relative bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 flex flex-col items-center">
               <button onClick={() => setShowScroll(false)} className="absolute top-4 right-4 text-rose-500 hover:text-rose-700">
                 <X className="w-5 h-5" />
               </button>
-              <p className="text-rose-600 text-lg">{longMessage}</p>
+              <p className="text-rose-600 text-lg whitespace-pre-line">{longMessage}</p>
             </motion.div>
           </motion.div>
         )}
@@ -233,7 +208,10 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
       {/* Bottom Clickable Pookie Card */}
       <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-40">
         <motion.button
-          onClick={() => setShowSpecialCard(true)}
+          onClick={() => {
+            triggerFireworks();
+            setShowSpecialCard(true);
+          }}
           className="bg-rose-200 px-6 py-2 rounded-xl shadow-md text-2xl font-bold text-rose-500 hover:bg-rose-300"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
@@ -242,10 +220,30 @@ From the moment we met I somehow knew in my heart that youuu are the one and sin
         </motion.button>
       </div>
 
+      {/* 🎆 Fireworks Animation */}
+      {fireworks.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute pointer-events-none select-none"
+          style={{
+            left: "50%",
+            bottom: "90px",
+            fontSize: "20px",
+            color: p.color,
+            filter: "drop-shadow(0px 0px 4px rgba(255,255,255,0.7))"
+          }}
+          initial={{ opacity: 1, x: 0, y: 0, scale: 0 }}
+          animate={{ x: p.x * 200, y: p.y * -200, opacity: 0, rotate: 360, scale: 1.5 }}
+          transition={{ duration: 1.3, delay: p.delay, ease: "ease-out" }}
+        >
+          {p.shape}
+        </motion.div>
+      ))}
+
       {/* Special Card */}
       <AnimatePresence>
         {showSpecialCard && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <motion.div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 flex flex-col items-center" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}>
               <button onClick={() => setShowSpecialCard(false)} className="absolute top-4 right-4 text-rose-500 hover:text-rose-700">
                 <X className="w-5 h-5" />
